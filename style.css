@@ -99,24 +99,39 @@ h1, h2, h3, .metric-display, .record-value {
 .logo-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
-.logo-accent {
-  color: var(--accent-cyan);
-  font-weight: 900;
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+.robi3-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.25));
+}
+
+.title-sub-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo-wrapper h1 {
-  font-size: 1.6rem;
-  letter-spacing: 0.15em;
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
   background: linear-gradient(90deg, var(--text-primary) 60%, var(--accent-cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
+  line-height: 1.1;
+}
+
+.logo-byline {
+  font-size: 0.65rem;
+  color: var(--accent-cyan);
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  margin-top: 1px;
 }
 
 .logo-version {
@@ -126,7 +141,8 @@ h1, h2, h3, .metric-display, .record-value {
   border: 1px solid rgba(141, 162, 207, 0.3);
   padding: 1px 6px;
   border-radius: 4px;
-  margin-left: 0.5rem;
+  align-self: flex-start;
+  margin-top: 2px;
 }
 
 .privacy-badge {
