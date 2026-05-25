@@ -1355,6 +1355,20 @@ function initApp() {
   loadRecords();
   loadJumpHistory();
 
+  // 1. Verify MediaPipe Libraries are fully loaded
+  if (typeof Pose === 'undefined') {
+    el.hudStatusText.textContent = "ERROR: MEDIAPIPE OFFLINE";
+    alert("Connection Error: The MediaPipe body-tracking library could not be retrieved from the global CDN. Please check your internet connection and refresh.");
+    return;
+  }
+
+  // 2. Verify Secure Context (HTTPS) for Webcam Access
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    el.hudStatusText.textContent = "ERROR: HTTPS SECURE CONTEXT REQUIRED";
+    alert("Security Error: Webcam hardware access is restricted to secure domains (HTTPS). If you are using a custom domain or hosting, please make sure you are accessing the page via 'https://' and not 'http://'.");
+    return;
+  }
+
   // Instantiate Pose Tracking Instance
   const pose = new Pose({
     locateFile: (file) => {
