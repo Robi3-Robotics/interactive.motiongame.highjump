@@ -531,7 +531,6 @@ h1, h2, h3, .metric-display, .record-value {
   height: 100%;
   object-fit: cover;
   z-index: 2;
-  transform: scaleX(-1); /* Mirror camera for natural experience */
 }
 
 /* Countdown Overlay text */
