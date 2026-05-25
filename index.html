@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ApexReach - The ultimate high-reach jump tracking and vertical leap testing application. Real-time body tracking, calibration, and athletic performance dashboard.">
+  <title>ApexReach // High-Reach Jump Tracker</title>
+  
+  <!-- Google Fonts - Outfit and Inter for athletic & technical feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Modern CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- MediaPipe CDN Utilities -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Futuristic Grid Background -->
+  <div class="grid-overlay"></div>
+  
+  <header class="app-header">
+    <div class="logo-wrapper">
+      <span class="logo-accent">//</span>
+      <h1 id="app-title">APEXREACH</h1>
+      <span class="logo-version">v1.2.0</span>
+    </div>
+    <div class="privacy-badge">
+      <span class="shield-icon">🛡️</span>
+      <span class="privacy-text">Local Camera Processing Only</span>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- LEFT PANEL: CONFIGURATION AND CONTROLS -->
+    <section class="panel panel-left" aria-labelledby="controls-heading">
+      <h2 id="controls-heading" class="panel-title">System Console</h2>
+      
+      <!-- Game Session Card -->
+      <div class="card card-game" style="border-color: var(--border-color-pink); background: linear-gradient(180deg, var(--bg-card), rgba(255, 0, 127, 0.04));">
+        <h3>Jump Gameplay</h3>
+        
+        <button id="btn-jump-session" class="btn btn-primary ripple" style="background: linear-gradient(135deg, #ff007f, #ff00cc); box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3); font-size: 1.1rem; padding: 0.95rem;">
+          <span class="btn-icon">🚀</span>
+          <span class="btn-text">Start Jumping</span>
+        </button>
+        
+        <div class="session-stats" style="margin-top: 1rem; display: grid; grid-template-columns: 1fr; gap: 0.5rem; text-align: center;">
+          <div style="background: rgba(5, 10, 23, 0.6); border: 1px solid rgba(255, 0, 127, 0.15); padding: 0.5rem; border-radius: 8px;">
+            <span class="sub-label" style="color: var(--accent-pink); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Session Highest Reach</span>
+            <div class="sub-value" style="font-size: 1.4rem; color: var(--accent-pink); font-family: var(--font-display); font-weight: bold;" id="val-session-highest">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsible Calibration Card -->
+      <div class="card card-settings" id="card-calibration">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+          <h3 style="margin: 0; border: none; padding: 0;">1. Calibration Console</h3>
+          <button type="button" class="btn-tertiary" id="btn-toggle-cal-win" style="padding: 2px 8px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; text-transform: none; letter-spacing: normal;">Hide Console</button>
+        </div>
+        
+        <div id="calibration-card-body">
+          <div class="input-group" style="margin-bottom: 1rem;">
+            <label>Measurement Unit</label>
+            <div class="unit-toggle" id="unit-toggle-group" style="width: 100%; display: flex; background: rgba(255, 255, 255, 0.05); padding: 2px; border-radius: 6px;">
+              <button type="button" class="unit-btn active" id="unit-cm" data-unit="cm" style="flex: 1;">cm</button>
+              <button type="button" class="unit-btn" id="unit-in" data-unit="in" style="flex: 1;">in</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <button id="btn-apply-calibration" class="btn btn-primary ripple">
+              <span class="btn-icon">🔒</span>
+              <span class="btn-text">Lock Calibration</span>
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(5, 10, 23, 0.4); border: 1px solid rgba(0, 240, 255, 0.1); padding: 0.75rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label for="chk-show-lines" style="font-size: 0.75rem; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; cursor: pointer; margin: 0;">Show Calibration Lines</label>
+              <input type="checkbox" id="chk-show-lines" checked style="accent-color: var(--accent-cyan); width: 16px; height: 16px; cursor: pointer;">
+            </div>
+          </div>
+
+          <p class="setting-hint" style="color: var(--text-primary); font-weight: 600; margin-top: 1rem;">
+            👉 3-LINE MANUAL CALIBRATION:
+          </p>
+          <ul style="padding-left: 1.1rem; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; list-style-type: disc;">
+            <li>Drag the horizontal lines on the canvas to match physical reference markers in your room:</li>
+            <li><span style="color: var(--accent-pink); font-weight: bold;">💗 2.0m Line</span>: 2.0 meters above the floor</li>
+            <li><span style="color: var(--accent-yellow); font-weight: bold;">💛 1.5m Line</span>: 1.5 meters above the floor</li>
+            <li><span style="color: var(--accent-cyan); font-weight: bold;">💙 1.0m Line</span>: 1.0 meter above the floor</li>
+            <li>Once aligned, click **Lock Calibration** to lock the visual scale.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Player Focus Card (ROI Bounding Box) -->
+      <div class="card card-roi">
+        <h3>3. Player Focus</h3>
+        
+        <div class="input-group" style="margin-bottom: 0.5rem;">
+          <label>Sensor Tracking Range</label>
+          <div class="mode-toggle" id="roi-mode-group">
+            <button type="button" class="mode-btn active" id="roi-full" data-focus="full">Full Screen</button>
+            <button type="button" class="mode-btn" id="roi-focus" data-focus="focus">Select Player</button>
+          </div>
+        </div>
+        
+        <p class="setting-hint" id="roi-hint" style="margin-top: 0.5rem;">
+          Tracking all motions in the full camera feed. Ideal for single-athlete setups.
+        </p>
+      </div>
+
+      <!-- Instructions / Help -->
+      <div class="card card-instructions">
+        <h3>Quick Guide</h3>
+        <ol>
+          <li>Input your height and stand about 2.5 - 3.5 meters (8 - 12 feet) from the camera.</li>
+          <li>Click **Start Calibration** and raise your jump hand straight up.</li>
+          <li>Stand still during the 3-second countdown.</li>
+          <li>Take a step back, coil, and **EXPLODE** upwards reaching as high as possible!</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- CENTER PANEL: LIVE FEED VIEWER -->
+    <section class="panel panel-center" aria-label="Live Tracking Feed">
+      <div class="feed-wrapper">
+        <!-- Hidden source video -->
+        <video id="video-source" playsinline style="display: none;"></video>
+        
+        <!-- Live HUD Canvas Overlay -->
+        <canvas id="canvas-hud"></canvas>
+        
+        <!-- Countdown overlay -->
+        <div id="countdown-overlay" class="hidden">
+          <span id="countdown-number">3</span>
+        </div>
+        
+        <!-- State Badge overlay -->
+        <div class="feed-badge" id="hud-status">
+          <span class="pulse-dot"></span>
+          <span id="hud-status-text">INITIALIZING SENSORS...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: PERFORMANCE STATS -->
+    <section class="panel panel-right" aria-labelledby="stats-heading">
+      <h2 id="stats-heading" class="panel-title">Telemetry & Metrics</h2>
+      
+      <!-- Primary Live Stats -->
+      <div class="card card-main-stats">
+        <div class="metric-container">
+          <span class="metric-label">CURRENT REACH</span>
+          <div class="metric-display text-glow-cyan">
+            <span id="stat-live-reach">--</span>
+            <span class="metric-unit-suffix" id="unit-label-live">cm</span>
+          </div>
+        </div>
+        
+        <div class="metric-container">
+          <span class="metric-label">SESSION PEAK REACH</span>
+          <div class="metric-display text-glow-pink">
+            <span id="stat-live-leap">--</span>
+            <span class="metric-unit-suffix" id="unit-label-leap">cm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calibrated Metrics Display -->
+      <div class="card card-sub-stats">
+        <div class="sub-metric" style="grid-column: span 2; text-align: center;">
+          <span class="sub-label">Calibrated Floor</span>
+          <span class="sub-value" id="val-calibrated-floor">--</span>
+        </div>
+      </div>
+
+      <!-- Peak Records Card -->
+      <div class="card card-records">
+        <h3>Session Peaks</h3>
+        
+        <div class="record-row">
+          <div class="record-label">
+            <span class="record-icon">🥇</span>
+            <span>Max Reach</span>
+          </div>
+          <div class="record-value-wrapper">
+            <span class="record-value text-glow-cyan" id="record-max-reach">--</span>
+            <span class="record-unit" id="unit-label-record-reach">cm</span>
+          </div>
+        </div>
+
+        <div class="record-row">
+          <div class="record-label">
+            <span class="record-icon">⭐</span>
+            <span>Personal Best Reach</span>
+          </div>
+          <div class="record-value-wrapper">
+            <span class="record-value text-glow-pink" id="record-max-leap">--</span>
+            <span class="record-unit" id="unit-label-record-leap">cm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jump Leaderboard & Log -->
+      <div class="card card-history" style="max-height: 280px; display: flex; flex-direction: column; padding-bottom: 0.75rem;">
+        <h3 style="margin-bottom: 0.5rem;">Jump Leaderboard & Log</h3>
+        <div class="history-table-wrapper" style="flex: 1; overflow-y: auto; margin-right: -5px; padding-right: 5px;">
+          <table id="session-log-table" style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15); color: var(--text-secondary); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;">
+                <th style="padding: 0.5rem 0.25rem;">Jump #</th>
+                <th style="padding: 0.5rem 0.25rem; text-align: right;">Fingertip Reach</th>
+                <th style="padding: 0.5rem 0.25rem; text-align: right;">Time</th>
+              </tr>
+            </thead>
+            <tbody id="jump-history-list">
+              <!-- Jump history rows will be dynamically populated here -->
+              <tr>
+                <td colspan="3" style="padding: 1.5rem 0; text-align: center; color: var(--text-secondary); font-style: italic;">
+                  No jumps logged yet. Jump to begin!
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action items -->
+      <div class="card card-system-ops">
+        <button id="btn-reset-records" class="btn btn-secondary text-glow-yellow">
+          Reset Personal Records
+        </button>
+        <button id="btn-clear-history" class="btn btn-secondary text-glow-pink" style="border-color: rgba(255, 0, 127, 0.3); color: var(--accent-pink); margin-top: 0.2rem;">
+          Clear Jump Session Log
+        </button>
+        <button id="btn-audio-test" class="btn btn-tertiary" style="margin-top: 0.2rem;">
+          🔊 Test Audio Synth
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Powered by **MediaPipe Pose** & **HTML5 Graphics**. Calibrated locally.</p>
+  </footer>
+
+  <!-- Core Javascript Application Logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
