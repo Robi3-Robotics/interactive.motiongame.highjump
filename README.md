@@ -4,7 +4,7 @@ Apex Reach is a premium, high-performance web application designed to measure an
 
 This program was engineered to solve an urgent hardware breakdown for the [Robi3 Robotics High-Jump Game](https://www.instagram.com/p/DYrVi6wiOe9/), which originally operated using physical infra-red light sensors. By leveraging computer vision, we replaced failing physical infrastructure with a robust, zero-cost camera tracking algorithm.
 
-🔗 **Live Deployment**: **[https://robi3-robotics.github.io/interactive.motiongame.highjump/](https://robi3-robotics.github.io/interactive.motiongame.highjump/)**
+🔗 **Live Deployment**: **[https://jump-interactive.robi3.com/](https://jump-interactive.robi3.com/)**
 
 ---
 
